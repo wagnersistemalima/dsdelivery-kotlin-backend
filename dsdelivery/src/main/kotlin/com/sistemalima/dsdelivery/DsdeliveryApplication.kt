@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class DsdeliveryApplication
 
 fun main(args: Array<String>) {
-	runApplication<DsdeliveryApplication>(*args)
+    runApplication<DsdeliveryApplication>(*args)
 }
