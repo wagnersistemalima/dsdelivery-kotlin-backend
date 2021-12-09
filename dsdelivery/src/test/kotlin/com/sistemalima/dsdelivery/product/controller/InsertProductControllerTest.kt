@@ -2,24 +2,25 @@ package com.sistemalima.dsdelivery.product.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.sistemalima.dsdelivery.products.request.InsertProductRequest
+import com.sistemalima.dsdelivery.products.response.InsertProductResponse
+import com.sistemalima.dsdelivery.products.service.InsertProductService
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.Mock
+import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
-import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import org.springframework.transaction.annotation.Transactional
 import java.net.URI
 
+@ExtendWith(SpringExtension::class)
 @SpringBootTest
 @AutoConfigureMockMvc
-@AutoConfigureDataJpa
-@ActiveProfiles("test")
-@Transactional
 class InsertProductControllerTest {
 
     @field:Autowired
@@ -28,6 +29,9 @@ class InsertProductControllerTest {
     @field:Autowired
     lateinit var objectMapper: ObjectMapper
 
+    @field:Mock
+    lateinit var insertProductService: InsertProductService
+
     @Test
     fun `deve retornar 201 created`() {
         // cenario
@@ -35,12 +39,17 @@ class InsertProductControllerTest {
         val uri = URI("/api/products")
 
         val request = getRequestValid()
+        val product = request.toModel()
+        val response = InsertProductResponse(product)
 
         // ação
 
+        // comportamento
+        Mockito.`when`(insertProductService.insert(product)).thenReturn(response)
+
         mockMvc.perform(MockMvcRequestBuilders.post(uri)
             .contentType(MediaType.APPLICATION_JSON).content(toJson(request)))
-            .andExpect(MockMvcResultMatchers.status().`is`(201))
+            .andExpect(MockMvcResultMatchers.status().isCreated)
 
         // assertivas
 
@@ -58,7 +67,7 @@ class InsertProductControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post(uri)
             .contentType(MediaType.APPLICATION_JSON).content(toJson(request)))
-            .andExpect(MockMvcResultMatchers.status().`is`(400))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
 
         // assertivas
 
@@ -76,7 +85,7 @@ class InsertProductControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post(uri)
             .contentType(MediaType.APPLICATION_JSON).content(toJson(request)))
-            .andExpect(MockMvcResultMatchers.status().`is`(400))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
 
         // assertivas
 
@@ -94,7 +103,7 @@ class InsertProductControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post(uri)
             .contentType(MediaType.APPLICATION_JSON).content(toJson(request)))
-            .andExpect(MockMvcResultMatchers.status().`is`(400))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
 
         // assertivas
 
@@ -112,7 +121,7 @@ class InsertProductControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post(uri)
             .contentType(MediaType.APPLICATION_JSON).content(toJson(request)))
-            .andExpect(MockMvcResultMatchers.status().`is`(400))
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
 
         // assertivas
 
